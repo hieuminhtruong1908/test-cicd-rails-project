@@ -17,7 +17,7 @@ module Api
           rails:         Rails.application.rails_version,
           postgresql:    Rails.application.postgresql_version,
           redis:         Rails.application.redis_version,
-          opensearch:    Rails.application.opensearch_version
+          opensearch:    'Demo'
         }
       end
     end
