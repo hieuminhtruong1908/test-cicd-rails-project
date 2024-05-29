@@ -63,4 +63,8 @@ class PostsController < ApplicationController
   def post_params
     params.require(:post).permit(:title, :content, :copyright, clips_attributes: [ :id, :image, :_destroy ])
   end
+
+  helper_method def search_string
+    params[:q].presence
+  end
 end
