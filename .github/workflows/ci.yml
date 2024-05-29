@@ -7,6 +7,7 @@ concurrency:
 
 env:
   DOCKER_IMAGE_NAME: rails-app
+  DOCKER_NGINX_IMAGE_NAME: rails_nginx
   DEPLOY_USER: deploy
   HOST: 54.174.219.87
 
@@ -98,7 +99,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build Docker image
+      - name: Build Docker image:Rails APP
         run: docker build -t rails-app:latest .
 
       - name: Tag Docker image
@@ -106,6 +107,17 @@ jobs:
 
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKER_USER_ID }}/${{ env.DOCKER_IMAGE_NAME }}:latest
+
+
+      
+      - name: Build Nginx Web server
+        run: docker build -f ./docker/nginx/Dockerfile.production -t ${{ env.DOCKER_NGINX_IMAGE_NAME }}:latest .
+
+      - name: Tag Docker image
+        run: docker tag ${{ env.DOCKER_NGINX_IMAGE_NAME }}:latest ${{ secrets.DOCKER_USER_ID }}/${{ env.DOCKER_NGINX_IMAGE_NAME }}:latest
+
+      - name: Push Docker image
+        run: docker push ${{ secrets.DOCKER_USER_ID }}/${{ env.DOCKER_NGINX_IMAGE_NAME }}:latest
 
   deploy:
     runs-on: ubuntu-latest

@@ -46,6 +46,8 @@ services:
     links:
       - db
       - redis
+    volumes:
+      - public_web:/app/public
 
   worker:
     <<: *app_base
@@ -53,6 +55,17 @@ services:
     ports: []
     depends_on:
       - app
+  web:
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile.production
+    depends_on:
+      - app
+    ports:
+      - 80:80
+    volumes:
+      - public_web:/var/www/public
 
 volumes:
   db-data:
+  public_web:

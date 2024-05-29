@@ -7,20 +7,11 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
 
-  opensearch:
-    image: opensearchproject/opensearch:latest
-    volumes:
-      - os-data:/usr/share/opensearch/data
-    environment:
-      - discovery.type=single-node
-      - DISABLE_SECURITY_PLUGIN=true
-
   redis:
     image: redis:alpine
 
   app: &app_base
-    build:
-      context: .
+    image: 19081998125/rails-app:latest
     environment:
       - OPENSEARCH_HOST=opensearch
       - REDIS_SIDEKIQ_URL=redis://redis:6379/0
@@ -53,9 +44,10 @@ services:
     ports:
       - 30002:3000
     links:
-      - opensearch
       - db
       - redis
+    volumes:
+      - public_web:/app/public
 
   worker:
     <<: *app_base
@@ -63,7 +55,17 @@ services:
     ports: []
     depends_on:
       - app
+  web:
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile.production
+    depends_on:
+      - app
+    ports:
+      - 80:80
+    volumes:
+      - public_web:/var/www/public
 
 volumes:
   db-data:
-  os-data:
+  public_web:
