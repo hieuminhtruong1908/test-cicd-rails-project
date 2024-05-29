@@ -85,6 +85,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Hiển thị giá trị của một secret
+        run: echo "Giá trị của secret là ${{ secrets.DOCKER_USERNAME }}"
+      - name: Hiển thị giá trị của một secret
+        run: echo "Giá trị của secret là ${{ secrets.DOCKER_PASSWORD }}"
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
