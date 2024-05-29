@@ -103,4 +103,4 @@ jobs:
         run: docker tag ${{ env.DOCKER_IMAGE_NAME }}:latest ${{ secrets.DOCKER_USER_ID }}/${{ env.DOCKER_IMAGE_NAME }}:latest
 
       - name: Push Docker image
-        run: docker push my-dockerhub-username/my-image:latest
+        run: docker push ${{ secrets.DOCKER_USER_ID }}/${{ env.DOCKER_IMAGE_NAME }}:latest
