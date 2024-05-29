@@ -7,6 +7,8 @@ concurrency:
 
 env:
   DOCKER_IMAGE_NAME: rails-app
+  DEPLOY_USER: deploy
+  HOST: 54.174.219.87
 
 jobs:
   test:
@@ -104,3 +106,28 @@ jobs:
 
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKER_USER_ID }}/${{ env.DOCKER_IMAGE_NAME }}:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/master'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+      - name: SSH and Run Docker Image
+        env:
+          DOCKER_IMAGE_NAME: ${{ env.DOCKER_IMAGE_NAME }}
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ env.DEPLOY_USER }}@${{ env.HOST }} << EOF
+            docker pull ${{ secrets.DOCKER_USER_ID }}/${{ env.DOCKER_IMAGE_NAME }}:latest
+            docker-compose down app
+            docker image rm ${{ secrets.DOCKER_USER_ID }}/${{ env.DOCKER_IMAGE_NAME }}:latest -f
+            docker-compose up -d
+          EOF
