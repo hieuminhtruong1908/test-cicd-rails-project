@@ -1,10 +1,6 @@
 class PostsController < ApplicationController
   def index
-    @posts = if search_string
-      Post.search_for(search_string, page: params[:page], per_page: 25)
-    else
-      Post.order(updated_at: :desc).page(params[:page]).per(25)
-    end
+    @posts = Post.order(updated_at: :desc).page(params[:page]).per(25)
     authorize @posts
 
     respond_to do |format|
@@ -66,9 +62,5 @@ class PostsController < ApplicationController
   # Only allow a list of trusted parameters through.
   def post_params
     params.require(:post).permit(:title, :content, :copyright, clips_attributes: [ :id, :image, :_destroy ])
-  end
-
-  helper_method def search_string
-    params[:q].presence
   end
 end
