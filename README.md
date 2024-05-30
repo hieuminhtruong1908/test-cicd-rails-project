@@ -76,3 +76,8 @@ The stack is ready to host with [traefik](https://traefik.io/) or [nginx proxy](
 ## Demo
 
 A demo installation is set up on [https://docker-rails.ledermann.dev](https://docker-rails.ledermann.dev).
+
+
+
+
+Local: access http://localhost
