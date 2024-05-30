@@ -138,6 +138,7 @@ jobs:
           DOCKER_IMAGE_NAME: ${{ env.DOCKER_IMAGE_NAME }}
         run: |
           ssh -o StrictHostKeyChecking=no ${{ env.DEPLOY_USER }}@${{ env.HOST }} << EOF
+            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             cd ./rails-app
             docker pull ${{ secrets.DOCKER_USER_ID }}/${{ env.DOCKER_IMAGE_NAME }}:latest
             docker-compose down app worker
